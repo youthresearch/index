@@ -206,9 +206,10 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .password-toggle:hover { color: var(--ink); background: var(--lavender-tint); }
 .password-toggle svg { width: 20px; height: 20px; }
-.password-toggle .eye-off { display: none; }
-.password-toggle[aria-pressed="true"] .eye-on { display: none; }
-.password-toggle[aria-pressed="true"] .eye-off { display: block; }
+.password-toggle .eye-off { display: block; }
+.password-toggle .eye-on { display: none; }
+.password-toggle[aria-pressed="true"] .eye-off { display: none; }
+.password-toggle[aria-pressed="true"] .eye-on { display: block; }
 
 .password-hint { font-size: 0.82rem; color: var(--body); margin-top: 0.4rem; }
 
@@ -278,6 +279,14 @@ textarea { resize: vertical; min-height: 90px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
   </style>
+  <!--
+    FIREBASE AUTHENTICATION
+    Handles real Google / Apple / Microsoft sign-in without needing your
+    own backend server. See the setup steps in the script near the
+    bottom of this file (search for "FIREBASE CONFIG").
+  -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 
@@ -323,15 +332,10 @@ textarea { resize: vertical; min-height: 90px; }
 
             <!--
               SOCIAL SIGN-IN
-              These buttons are placeholders. Each currently links to "#" and
-              is wired to a stub function (signInWithProvider) in the script
-              below. To make them functional, replace that function with a
-              real OAuth redirect for each provider, e.g.:
-                Google  -> Google Identity Services / OAuth 2.0
-                Apple   -> Sign in with Apple JS
-                Microsoft -> Microsoft Identity Platform (MSAL)
-              Each provider requires its own developer app registration and
-              client ID before it can redirect users and return an account.
+              These buttons are wired to Firebase Authentication. Until you
+              add your own Firebase project config (see "FIREBASE CONFIG"
+              in the <script> near the bottom of this file), clicking them
+              will show a setup reminder instead of signing anyone in.
             -->
             <div class="social-grid">
               <button type="button" class="btn btn--social btn--block" data-provider="Google">
@@ -620,16 +624,81 @@ document.querySelectorAll('.password-toggle').forEach((btn) => {
 });
 
 /* ---------------------------------------------------------------------
-   SOCIAL SIGN-IN (placeholder)
-   Swap this out for real OAuth redirects once each provider's app is
-   registered, e.g.:
-     Google:    window.location.href = googleOAuthUrl;
-     Apple:     AppleID.auth.signIn();
-     Microsoft: msalInstance.loginRedirect();
-   --------------------------------------------------------------------- */
-function signInWithProvider(provider) {
-  console.log('Sign-in requested with provider:', provider);
-  alert('Sign in with ' + provider + ' isn\'t connected yet. Wire this button up to that provider\'s OAuth flow.');
+   FIREBASE CONFIG — fill this in with YOUR project's values
+   ---------------------------------------------------------------------
+   1. Go to https://console.firebase.google.com and create a free project.
+   2. In the project, go to Build > Authentication > Sign-in method, and
+      enable the providers you want: Google, Apple, Microsoft.
+        - Google: works immediately, no extra setup.
+        - Apple: requires an Apple Developer account ($99/yr) to register
+          a Services ID — see Firebase's "Apple" sign-in setup guide.
+        - Microsoft: requires registering an app in the Azure Portal
+          (free) — Firebase's "Microsoft" sign-in setup guide walks
+          through it.
+   3. In Project settings > General > Your apps, click "Add app" > Web,
+      and copy the firebaseConfig object it gives you. Paste it below,
+      replacing the placeholder values (these are public identifiers,
+      safe to expose in client-side code).
+   4. In Authentication > Settings > Authorized domains, add your GitHub
+      Pages domain (e.g. yourusername.github.io) or custom domain.
+   5. Push this file to GitHub — the buttons will then open a real
+      sign-in popup for each provider.
+   ------------------------------------------------------------------ */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+let firebaseReady = false;
+try {
+  if (window.firebase && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+    firebase.initializeApp(firebaseConfig);
+    firebaseReady = true;
+  }
+} catch (err) {
+  console.error("Firebase init failed:", err);
+}
+
+function signInWithProvider(providerName) {
+  if (!firebaseReady) {
+    alert(
+      "Sign in with " + providerName + " isn't connected yet.\n\n" +
+      "Add your Firebase project config in the script (search for " +
+      "\"FIREBASE CONFIG\" in signup.html) to activate this button."
+    );
+    return;
+  }
+
+  let provider;
+  if (providerName === "Google") {
+    provider = new firebase.auth.GoogleAuthProvider();
+  } else if (providerName === "Apple") {
+    provider = new firebase.auth.OAuthProvider("apple.com");
+  } else if (providerName === "Microsoft") {
+    provider = new firebase.auth.OAuthProvider("microsoft.com");
+  } else {
+    return;
+  }
+
+  firebase.auth().signInWithPopup(provider)
+    .then((result) => {
+      const user = result.user;
+      console.log("Signed in:", user.displayName, user.email);
+      // Successful sign-in — show the same success state as email signup.
+      form.classList.add("hide");
+      signinNote.style.display = "none";
+      document.querySelector(".social-grid").style.display = "none";
+      document.querySelector(".divider-word").style.display = "none";
+      successBox.classList.add("show");
+    })
+    .catch((error) => {
+      console.error("Sign-in error:", error);
+      alert("Sign-in with " + providerName + " failed: " + error.message);
+    });
 }
 
 document.querySelectorAll('.btn--social').forEach((btn) => {
