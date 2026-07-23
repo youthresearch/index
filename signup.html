@@ -194,6 +194,34 @@ textarea { resize: vertical; min-height: 90px; }
 .field-error { display: none; color: var(--danger); font-size: 0.84rem; margin-top: 0.4rem; }
 .field-error.show { display: block; }
 
+.required-mark { color: var(--danger); margin-left: 0.2rem; }
+
+.password-field { position: relative; }
+.password-field input { padding-right: 2.9rem; }
+.password-toggle {
+  position: absolute; top: 50%; right: 0.6rem; transform: translateY(-50%);
+  background: transparent; border: none; padding: 0.4rem; cursor: pointer;
+  color: var(--body); display: grid; place-items: center; border-radius: 8px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+.password-toggle:hover { color: var(--ink); background: var(--lavender-tint); }
+.password-toggle svg { width: 20px; height: 20px; }
+.password-toggle .eye-off { display: none; }
+.password-toggle[aria-pressed="true"] .eye-on { display: none; }
+.password-toggle[aria-pressed="true"] .eye-off { display: block; }
+
+.password-hint { font-size: 0.82rem; color: var(--body); margin-top: 0.4rem; }
+
+/* ---- Social sign-in ---------------------------------------------------- */
+.social-grid { display: grid; gap: 0.7rem; grid-template-columns: 1fr; margin-bottom: 0.4rem; }
+.btn--social {
+  background: var(--paper); color: var(--ink); border-color: var(--line);
+  text-transform: none; letter-spacing: 0.01em; font-size: 0.94rem; font-weight: 500;
+  padding: 0.75rem 1.2rem; gap: 0.7rem;
+}
+.btn--social:hover { background: var(--cream-2); border-color: var(--ink); transform: translateY(-2px); }
+.btn--social svg { width: 19px; height: 19px; flex: none; }
+
 .checkbox-row { display: flex; align-items: flex-start; gap: 0.7rem; margin-bottom: 1.6rem; }
 .checkbox-row input[type="checkbox"] { margin-top: 0.25rem; width: 17px; height: 17px; accent-color: var(--lavender); flex: none; }
 .checkbox-row label { margin: 0; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.92rem; color: var(--body); }
@@ -293,6 +321,47 @@ textarea { resize: vertical; min-height: 90px; }
         <div class="signup-wrap">
           <div class="signup-card">
 
+            <!--
+              SOCIAL SIGN-IN
+              These buttons are placeholders. Each currently links to "#" and
+              is wired to a stub function (signInWithProvider) in the script
+              below. To make them functional, replace that function with a
+              real OAuth redirect for each provider, e.g.:
+                Google  -> Google Identity Services / OAuth 2.0
+                Apple   -> Sign in with Apple JS
+                Microsoft -> Microsoft Identity Platform (MSAL)
+              Each provider requires its own developer app registration and
+              client ID before it can redirect users and return an account.
+            -->
+            <div class="social-grid">
+              <button type="button" class="btn btn--social btn--block" data-provider="Google">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.87c2.27-2.09 3.58-5.17 3.58-8.82Z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.94-2.91l-3.87-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.11A12 12 0 0 0 12 24Z"/>
+                  <path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28V6.61H1.27A12 12 0 0 0 0 12c0 1.94.46 3.77 1.27 5.39l4-3.11Z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.27 6.61l4 3.11C6.22 6.86 8.87 4.75 12 4.75Z"/>
+                </svg>
+                <span>Continue with Google</span>
+              </button>
+              <button type="button" class="btn btn--social btn--block" data-provider="Apple">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#000" d="M16.36 1c.12 1.02-.29 2.03-.9 2.77-.63.76-1.68 1.35-2.7 1.27-.14-1 .34-2.05.94-2.73C14.35 1.5 15.42.94 16.36 1Zm3.3 16.66c-.36.83-.53 1.2-.99 1.94-.64 1.03-1.55 2.31-2.67 2.32-1 .01-1.26-.65-2.61-.64-1.36.01-1.64.66-2.64.65-1.12-.01-1.98-1.17-2.62-2.2-1.8-2.9-1.99-6.3-.88-8.11.79-1.29 2.03-2.04 3.2-2.04 1.19 0 1.94.66 2.92.66.96 0 1.54-.66 2.92-.66 1.04 0 2.14.57 2.92 1.55-2.57 1.41-2.15 5.08.45 6.53Z"/>
+                </svg>
+                <span>Continue with Apple</span>
+              </button>
+              <button type="button" class="btn btn--social btn--block" data-provider="Microsoft">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="1" y="1" width="10" height="10" fill="#F25022"/>
+                  <rect x="13" y="1" width="10" height="10" fill="#7FBA00"/>
+                  <rect x="1" y="13" width="10" height="10" fill="#00A4EF"/>
+                  <rect x="13" y="13" width="10" height="10" fill="#FFB900"/>
+                </svg>
+                <span>Continue with Microsoft</span>
+              </button>
+            </div>
+
+            <div class="divider-word">or sign up with email</div>
+
             <!-- General error banner (shown by JS if the form is submitted with issues) -->
             <div class="form-alert form-alert--error" id="form-alert">
               <span>Please fix the highlighted fields below and try again.</span>
@@ -301,21 +370,46 @@ textarea { resize: vertical; min-height: 90px; }
             <form class="signup-form" id="signup-form" novalidate>
               <div class="form-row-split">
                 <div class="form-row">
-                  <label for="first-name">First name</label>
+                  <label for="first-name">First name<span class="required-mark">*</span></label>
                   <input type="text" id="first-name" name="first-name" autocomplete="given-name" required>
-                  <p class="field-error" id="err-first-name">Please enter your first name.</p>
+                  <p class="field-error" id="err-first-name">Input required.</p>
                 </div>
                 <div class="form-row">
-                  <label for="last-name">Last name</label>
+                  <label for="last-name">Last name<span class="required-mark">*</span></label>
                   <input type="text" id="last-name" name="last-name" autocomplete="family-name" required>
-                  <p class="field-error" id="err-last-name">Please enter your last name.</p>
+                  <p class="field-error" id="err-last-name">Input required.</p>
                 </div>
               </div>
 
               <div class="form-row">
-                <label for="email">Email address</label>
+                <label for="email">Email address<span class="required-mark">*</span></label>
                 <input type="email" id="email" name="email" autocomplete="email" required>
-                <p class="field-error" id="err-email">Please enter a valid email address.</p>
+                <p class="field-error" id="err-email">Input required.</p>
+              </div>
+
+              <div class="form-row-split">
+                <div class="form-row">
+                  <label for="password">Password<span class="required-mark">*</span></label>
+                  <div class="password-field">
+                    <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+                    <button type="button" class="password-toggle" data-target="password" aria-pressed="false" aria-label="Show password">
+                      <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.6 20.6 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 4c7 0 11 7 11 7a20.7 20.7 0 0 1-2.34 3.32M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+                    </button>
+                  </div>
+                  <p class="field-error" id="err-password">Input required (8+ characters).</p>
+                </div>
+                <div class="form-row">
+                  <label for="password-confirm">Confirm password<span class="required-mark">*</span></label>
+                  <div class="password-field">
+                    <input type="password" id="password-confirm" name="password-confirm" autocomplete="new-password" minlength="8" required>
+                    <button type="button" class="password-toggle" data-target="password-confirm" aria-pressed="false" aria-label="Show password">
+                      <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                      <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a20.6 20.6 0 0 1 5.06-5.94M9.9 4.24A10.6 10.6 0 0 1 12 4c7 0 11 7 11 7a20.7 20.7 0 0 1-2.34 3.32M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>
+                    </button>
+                  </div>
+                  <p class="field-error" id="err-password-confirm">Passwords must match.</p>
+                </div>
               </div>
 
               <div class="form-row-split">
@@ -481,6 +575,8 @@ if (form) {
     const firstName = document.getElementById('first-name').value.trim();
     const lastName = document.getElementById('last-name').value.trim();
     const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('password-confirm').value;
     const grade = document.getElementById('grade').value;
     const agree = document.getElementById('agree').checked;
 
@@ -489,6 +585,13 @@ if (form) {
     setFieldError('first-name', !firstName); if (!firstName) hasError = true;
     setFieldError('last-name', !lastName); if (!lastName) hasError = true;
     setFieldError('email', !isValidEmail(email)); if (!isValidEmail(email)) hasError = true;
+
+    const passwordInvalid = !password || password.length < 8;
+    setFieldError('password', passwordInvalid); if (passwordInvalid) hasError = true;
+
+    const confirmInvalid = !passwordConfirm || passwordConfirm !== password;
+    setFieldError('password-confirm', confirmInvalid); if (confirmInvalid) hasError = true;
+
     setFieldError('grade', !grade); if (!grade) hasError = true;
 
     const agreeErr = document.getElementById('err-agree');
@@ -498,11 +601,42 @@ if (form) {
     alertBox.classList.toggle('show', hasError);
     if (hasError) return;
 
-    handleSubmit({ firstName, lastName, email, grade,
+    handleSubmit({ firstName, lastName, email, password, grade,
       school: document.getElementById('school').value.trim(),
       interest: document.getElementById('interest').value.trim() });
   });
 }
+
+// Show/hide password toggles
+document.querySelectorAll('.password-toggle').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const targetId = btn.getAttribute('data-target');
+    const input = document.getElementById(targetId);
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    btn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+    btn.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+  });
+});
+
+/* ---------------------------------------------------------------------
+   SOCIAL SIGN-IN (placeholder)
+   Swap this out for real OAuth redirects once each provider's app is
+   registered, e.g.:
+     Google:    window.location.href = googleOAuthUrl;
+     Apple:     AppleID.auth.signIn();
+     Microsoft: msalInstance.loginRedirect();
+   --------------------------------------------------------------------- */
+function signInWithProvider(provider) {
+  console.log('Sign-in requested with provider:', provider);
+  alert('Sign in with ' + provider + ' isn\'t connected yet. Wire this button up to that provider\'s OAuth flow.');
+}
+
+document.querySelectorAll('.btn--social').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    signInWithProvider(btn.getAttribute('data-provider'));
+  });
+});
 
 function handleSubmit(data) {
   // TODO: replace this block with a real network request, e.g.:
