@@ -1,24 +1,13 @@
 import { Resend } from "resend";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
-
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed"
-    });
-  }
+export async function POST(req) {
 
   try {
 
     const formData = await req.formData();
+
 
     const title = formData.get("ms-title");
     const msType = formData.get("ms-type");
@@ -34,6 +23,7 @@ export default async function handler(req, res) {
     const abstract = formData.get("abstract");
     const keywords = formData.get("keywords");
 
+
     const manuscript = formData.get("file-manuscript");
     const supporting = formData.get("file-supporting");
 
@@ -43,13 +33,14 @@ export default async function handler(req, res) {
 
     if (manuscript && manuscript.size > 0) {
 
-      const buffer = Buffer.from(
-        await manuscript.arrayBuffer()
-      );
-
       attachments.push({
+
         filename: manuscript.name,
-        content: buffer,
+
+        content: Buffer.from(
+          await manuscript.arrayBuffer()
+        )
+
       });
 
     }
@@ -57,33 +48,41 @@ export default async function handler(req, res) {
 
     if (supporting && supporting.size > 0) {
 
-      const buffer = Buffer.from(
-        await supporting.arrayBuffer()
-      );
-
       attachments.push({
+
         filename: supporting.name,
-        content: buffer,
+
+        content: Buffer.from(
+          await supporting.arrayBuffer()
+        )
+
       });
 
     }
 
 
+
     await resend.emails.send({
 
-      from: "YRP Journal <publish@youthresearchproject.com>",
-
-      to: [
-        "publish@youthresearchproject.com"
-      ],
-
-      replyTo: authorEmail,
+      from:
+      "YRP Journal <publish@youthresearchproject.com>",
 
 
-      subject: `New YRP Journal Submission: ${title}`,
+      to:
+      ["publish@youthresearchproject.com"],
 
 
-      text: `
+      replyTo:
+      authorEmail,
+
+
+      subject:
+      `New YRP Journal Submission: ${title}`,
+
+
+      text:
+
+`
 NEW YRP JOURNAL SUBMISSION
 
 
@@ -97,6 +96,7 @@ ${msType}
 
 Research Field:
 ${field}
+
 
 
 AUTHOR INFORMATION
@@ -114,13 +114,17 @@ Grade:
 ${grade}
 
 
+
 KEYWORDS:
+
 ${keywords}
 
 
+
 ABSTRACT:
+
 ${abstract}
-      `,
+`,
 
 
       attachments
@@ -128,19 +132,33 @@ ${abstract}
     });
 
 
-    return res.status(200).json({
-      success: true
+
+    return Response.json({
+
+      success:true
+
     });
 
 
-  } catch (error) {
 
-    console.error("Submission error:", error);
+  } catch(error) {
 
 
-    return res.status(500).json({
-      error: "Submission failed"
-    });
+    console.error(error);
+
+
+    return Response.json(
+
+      {
+        error:"Submission failed"
+      },
+
+      {
+        status:500
+      }
+
+    );
+
 
   }
 
