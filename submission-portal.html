@@ -646,265 +646,371 @@ textarea#abstract { min-height: 150px; }
   </footer>
 
   <script>
-// Sticky header shadow on scroll
-const header = document.querySelector('.site-header');
-if (header) {
-  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
-}
+// Header
+const header = document.querySelector(".site-header");
 
-// Mobile nav toggle
-const toggle = document.querySelector('.nav-toggle');
-const nav = document.getElementById('site-nav');
-if (toggle && nav) {
-  toggle.addEventListener('click', () => {
-    const open = nav.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open);
-  });
-  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    nav.classList.remove('open');
-    toggle.setAttribute('aria-expanded', false);
-  }));
-}
+if(header){
 
-// Footer year
-const yearEl = document.getElementById('year');
-if (yearEl) yearEl.textContent = new Date().getFullYear();
+window.addEventListener("scroll",()=>{
 
-/* ---------------------------------------------------------------------
-   FILE UPLOAD DROPZONES
-   Shows the chosen filename and supports drag-and-drop onto each box.
-   --------------------------------------------------------------------- */
-['manuscript', 'supporting'].forEach((key) => {
-  const drop = document.getElementById('drop-' + key);
-  const input = document.getElementById('file-' + key);
-  const nameEl = document.getElementById('filename-' + key);
-  if (!drop || !input) return;
+header.classList.toggle(
+"scrolled",
+window.scrollY > 8
+);
 
-  input.addEventListener('change', () => {
-    nameEl.textContent = input.files.length ? input.files[0].name : '';
-  });
-
-  ['dragenter', 'dragover'].forEach(evt =>
-    drop.addEventListener(evt, (e) => { e.preventDefault(); drop.classList.add('drag'); })
-  );
-  ['dragleave', 'drop'].forEach(evt =>
-    drop.addEventListener(evt, (e) => { e.preventDefault(); drop.classList.remove('drag'); })
-  );
-  drop.addEventListener('drop', (e) => {
-    if (e.dataTransfer.files.length) {
-      input.files = e.dataTransfer.files;
-      nameEl.textContent = e.dataTransfer.files[0].name;
-    }
-  });
 });
 
-// Live character counter for the abstract
-const abstractField = document.getElementById('abstract');
-const abstractCount = document.getElementById('abstract-count');
-if (abstractField && abstractCount) {
-  const updateCount = () => {
-    const len = abstractField.value.length;
-    abstractCount.textContent = len + ' / 1800 characters';
-    abstractCount.classList.toggle('over', len > 1800);
-  };
-  abstractField.addEventListener('input', updateCount);
-  updateCount();
 }
 
-/* ---------------------------------------------------------------------
-   ADDITIONAL AUTHORS
-   Clicking "+ Add another author" inserts a block with name, school,
-   and grade level fields. Each block can be removed individually, and
-   the "Author N" labels renumber automatically so removing one never
-   leaves a gap (e.g. Author 2, Author 3 stay correct after a removal).
-   These fields aren't required to submit — only the primary author is.
-   --------------------------------------------------------------------- */
-const authorsContainer = document.getElementById('authors-container');
-const addAuthorBtn = document.getElementById('add-author-btn');
-let authorUid = 0; // ever-increasing, used only for unique element IDs
 
-function renumberAuthors() {
-  const blocks = authorsContainer.querySelectorAll('.author-extra');
-  blocks.forEach((block, index) => {
-    // Primary author is implicitly "Author 1", so the first extra block is "Author 2"
-    block.querySelector('.author-extra-label').textContent = 'Author ' + (index + 2);
-  });
+// Mobile menu
+
+const toggle =
+document.querySelector(".nav-toggle");
+
+const nav =
+document.getElementById("site-nav");
+
+
+if(toggle && nav){
+
+toggle.onclick=()=>{
+
+const open =
+nav.classList.toggle("open");
+
+toggle.setAttribute(
+"aria-expanded",
+open
+);
+
+};
+
 }
 
-function addAuthorBlock() {
-  authorUid += 1;
-  const uid = authorUid;
-  const block = document.createElement('div');
-  block.className = 'author-extra';
-  block.innerHTML = `
-    <div class="author-extra-head">
-      <span class="author-extra-label">Author</span>
-      <button type="button" class="author-remove">Remove</button>
-    </div>
-    <div class="form-row-split">
-      <div class="form-row">
-        <label for="author-extra-first-${uid}">First name</label>
-        <input type="text" id="author-extra-first-${uid}" name="author-extra-first-${uid}">
-      </div>
-      <div class="form-row">
-        <label for="author-extra-last-${uid}">Last name</label>
-        <input type="text" id="author-extra-last-${uid}" name="author-extra-last-${uid}">
-      </div>
-    </div>
-    <div class="form-row-split" style="margin-top:1.3rem;">
-      <div class="form-row">
-        <label for="author-extra-school-${uid}">School / affiliation</label>
-        <input type="text" id="author-extra-school-${uid}" name="author-extra-school-${uid}">
-      </div>
-      <div class="form-row">
-        <label for="author-extra-grade-${uid}">Grade level</label>
-        <select id="author-extra-grade-${uid}" name="author-extra-grade-${uid}">
-          <option value="" disabled selected>Select one</option>
-          <option value="9">9th grade</option>
-          <option value="10">10th grade</option>
-          <option value="11">11th grade</option>
-          <option value="12">12th grade</option>
-          <option value="other">Other / not in high school</option>
-        </select>
-      </div>
-    </div>
-  `;
-  authorsContainer.appendChild(block);
 
-  block.querySelector('.author-remove').addEventListener('click', () => {
-    block.remove();
-    renumberAuthors();
-  });
 
-  renumberAuthors();
+// Footer year
+
+document.getElementById("year").textContent =
+new Date().getFullYear();
+
+
+
+
+
+/* ============================
+FILE UPLOAD
+============================ */
+
+
+["manuscript","supporting"].forEach(key=>{
+
+
+const drop =
+document.getElementById(
+`drop-${key}`
+);
+
+
+const input =
+document.getElementById(
+`file-${key}`
+);
+
+
+const name =
+document.getElementById(
+`filename-${key}`
+);
+
+
+
+if(!drop || !input)
+return;
+
+
+
+input.addEventListener(
+"change",
+()=>{
+
+
+if(input.files.length){
+
+name.textContent =
+input.files[0].name;
+
 }
 
-if (addAuthorBtn) {
-  addAuthorBtn.addEventListener('click', addAuthorBlock);
+
+});
+
+
+
+
+drop.addEventListener(
+"dragover",
+e=>{
+
+e.preventDefault();
+
+drop.classList.add("drag");
+
+});
+
+
+
+drop.addEventListener(
+"dragleave",
+()=>{
+
+drop.classList.remove("drag");
+
+});
+
+
+
+
+drop.addEventListener(
+"drop",
+e=>{
+
+
+e.preventDefault();
+
+
+drop.classList.remove("drag");
+
+
+
+const files =
+e.dataTransfer.files;
+
+
+
+if(files.length){
+
+
+const dt =
+new DataTransfer();
+
+
+dt.items.add(files[0]);
+
+
+input.files =
+dt.files;
+
+
+
+name.textContent =
+files[0].name;
+
+
 }
 
-/* ---------------------------------------------------------------------
-   FORM VALIDATION + MOCK SUBMISSION
-   This validates and shows a success state with a generated tracking ID,
-   but does NOT actually upload files or send data anywhere yet. Replace
-   handleSubmission() below with a real request to your backend or a
-   form/file service (e.g. Formspree with file uploads, a Google Form,
-   or your own server endpoint) to make it functional.
-   --------------------------------------------------------------------- */
-const form = document.getElementById('submission-form');
-const alertBox = document.getElementById('form-alert');
-const successBox = document.getElementById('submission-success');
-const submitBtn = document.getElementById('submit-btn');
 
-function setFieldError(id, hasError) {
-  const field = document.getElementById(id);
-  const err = document.getElementById('err-' + id);
-  if (field) field.classList.toggle('invalid', hasError);
-  if (err) err.classList.toggle('show', hasError);
+});
+
+
+});
+
+
+
+
+
+
+/* ============================
+ABSTRACT COUNTER
+============================ */
+
+
+const abstract =
+document.getElementById("abstract");
+
+
+const counter =
+document.getElementById("abstract-count");
+
+
+if(abstract && counter){
+
+
+function update(){
+
+counter.textContent =
+`${abstract.value.length} / 1800 characters`;
+
 }
 
-function isValidEmail(value) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+abstract.addEventListener(
+"input",
+update
+);
+
+
+update();
+
+
 }
 
-if (form) {
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let hasError = false;
 
-    const title = document.getElementById('ms-title').value.trim();
-    setFieldError('ms-title', !title); if (!title) hasError = true;
 
-    const msType = document.getElementById('ms-type').value;
-    setFieldError('ms-type', !msType); if (!msType) hasError = true;
 
-    const field = document.getElementById('field').value;
-    setFieldError('field', !field); if (!field) hasError = true;
 
-    const authorFirst = document.getElementById('author-first').value.trim();
-    setFieldError('author-first', !authorFirst); if (!authorFirst) hasError = true;
+/* ============================
+SUBMISSION
+============================ */
 
-    const authorLast = document.getElementById('author-last').value.trim();
-    setFieldError('author-last', !authorLast); if (!authorLast) hasError = true;
 
-    const authorEmail = document.getElementById('author-email').value.trim();
-    setFieldError('author-email', !isValidEmail(authorEmail)); if (!isValidEmail(authorEmail)) hasError = true;
+const form =
+document.getElementById(
+"submission-form"
+);
 
-    const school = document.getElementById('school').value.trim();
-    setFieldError('school', !school); if (!school) hasError = true;
 
-    const grade = document.getElementById('grade').value;
-    setFieldError('grade', !grade); if (!grade) hasError = true;
+const success =
+document.getElementById(
+"submission-success"
+);
 
-    const abstract = document.getElementById('abstract').value.trim();
-    setFieldError('abstract', !abstract); if (!abstract) hasError = true;
 
-    const keywords = document.getElementById('keywords').value.trim();
-    setFieldError('keywords', !keywords); if (!keywords) hasError = true;
+const alertBox =
+document.getElementById(
+"form-alert"
+);
 
-    const fileManuscript = document.getElementById('file-manuscript').files.length;
-    setFieldError('file-manuscript', !fileManuscript); if (!fileManuscript) hasError = true;
 
-    const declarations = ['dec-original', 'dec-cited', 'dec-ai', 'dec-terms']
-      .every(id => document.getElementById(id).checked);
-    const decErr = document.getElementById('err-declarations');
-    if (!declarations) { decErr.classList.add('show'); hasError = true; } else { decErr.classList.remove('show'); }
+const button =
+document.getElementById(
+"submit-btn"
+);
 
-    alertBox.classList.toggle('show', hasError);
-    if (hasError) {
-      alertBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
 
-    handleSubmission({ title, msType, field, authorFirst, authorLast, authorEmail, school, grade, abstract, keywords });
-  });
+
+
+
+form.addEventListener(
+"submit",
+async(e)=>{
+
+
+e.preventDefault();
+
+
+
+const file =
+document.getElementById(
+"file-manuscript"
+);
+
+
+
+if(!file.files.length){
+
+alertBox.classList.add("show");
+
+alertBox.scrollIntoView();
+
+return;
+
 }
 
-async function handleSubmission(data) {
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Submitting…";
 
 
-  const formData = new FormData(form);
+
+button.disabled=true;
+
+button.textContent =
+"Submitting...";
 
 
-  try {
-
-    const response = await fetch("/api/submissions", {
-      method: "POST",
-      body: formData
-    });
 
 
-    if (!response.ok) {
-      throw new Error("Submission failed");
-    }
+const data =
+new FormData(form);
 
 
-    const trackId = "YRP-" + Math.floor(100000 + Math.random() * 900000);
-
-    document.getElementById("track-id").textContent = trackId;
-
-    form.classList.add("hide");
-    successBox.classList.add("show");
-
-    successBox.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
 
 
-  } catch (error) {
+try{
 
-    alert(
-      "Your submission could not be sent. Please try again."
-    );
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Submit manuscript";
+const response =
+await fetch(
+"/api/submissions",
+{
 
-  }
+method:"POST",
+
+body:data
+
 }
+);
+
+
+
+if(!response.ok){
+
+throw new Error();
+
+}
+
+
+
+const track =
+"YRP-" +
+Math.floor(
+100000 +
+Math.random()*900000
+);
+
+
+
+document.getElementById(
+"track-id"
+).textContent =
+track;
+
+
+
+form.classList.add("hide");
+
+
+success.classList.add(
+"show"
+);
+
+
+
+success.scrollIntoView({
+behavior:"smooth"
+});
+
+
+
+}
+
+catch(error){
+
+
+alert(
+"Submission failed. Please try again."
+);
+
+
+
+button.disabled=false;
+
+
+button.textContent =
+"Submit manuscript";
+
+
+}
+
+
+
+});
