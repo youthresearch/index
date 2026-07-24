@@ -862,22 +862,49 @@ if (form) {
   });
 }
 
-function handleSubmission(data) {
-  // TODO: replace with a real network request that uploads the files
-  // and stores the submission, e.g.:
-  // const formData = new FormData(form);
-  // fetch('/api/submissions', { method: 'POST', body: formData });
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Submitting…';
+async function handleSubmission(data) {
 
-  setTimeout(() => {
-    const trackId = 'YRP-' + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('track-id').textContent = trackId;
-    form.classList.add('hide');
-    successBox.classList.add('show');
-    successBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 700);
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting…";
+
+
+  const formData = new FormData(form);
+
+
+  try {
+
+    const response = await fetch("/api/submissions", {
+      method: "POST",
+      body: formData
+    });
+
+
+    if (!response.ok) {
+      throw new Error("Submission failed");
+    }
+
+
+    const trackId = "YRP-" + Math.floor(100000 + Math.random() * 900000);
+
+    document.getElementById("track-id").textContent = trackId;
+
+    form.classList.add("hide");
+    successBox.classList.add("show");
+
+    successBox.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+
+  } catch (error) {
+
+    alert(
+      "Your submission could not be sent. Please try again."
+    );
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit manuscript";
+
+  }
 }
-  </script>
-</body>
-</html>
