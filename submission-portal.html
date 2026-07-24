@@ -350,7 +350,11 @@ textarea#abstract { min-height: 150px; }
               <span>Please fix the highlighted fields below and try again.</span>
             </div>
 
-            <form class="submission-form" id="submission-form" novalidate>
+            <form 
+                class="submission-form" 
+                id="submission-form" 
+                enctype="multipart/form-data"
+              novalidate>
 
               <!-- Manuscript details -->
               <div class="form-section">
@@ -1014,3 +1018,7 @@ button.textContent =
 
 
 });
+</script>
+
+</body>
+</html>
