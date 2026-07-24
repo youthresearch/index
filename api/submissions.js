@@ -1,13 +1,23 @@
 import { Resend } from "resend";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async function handler(req, res) {
+
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed"
+    });
   }
 
   try {
+
     const formData = await req.formData();
 
     const title = formData.get("ms-title");
@@ -30,31 +40,48 @@ export default async function handler(req, res) {
 
     const attachments = [];
 
+
     if (manuscript && manuscript.size > 0) {
-      const buffer = Buffer.from(await manuscript.arrayBuffer());
+
+      const buffer = Buffer.from(
+        await manuscript.arrayBuffer()
+      );
 
       attachments.push({
         filename: manuscript.name,
         content: buffer,
       });
+
     }
 
+
     if (supporting && supporting.size > 0) {
-      const buffer = Buffer.from(await supporting.arrayBuffer());
+
+      const buffer = Buffer.from(
+        await supporting.arrayBuffer()
+      );
 
       attachments.push({
         filename: supporting.name,
         content: buffer,
       });
+
     }
 
 
     await resend.emails.send({
-      from: "YRP Journal <submissions@youthresearchproject.com>",
-      to: ["publish@youthresearchproject.com"],
+
+      from: "YRP Journal <publish@youthresearchproject.com>",
+
+      to: [
+        "publish@youthresearchproject.com"
+      ],
+
       replyTo: authorEmail,
 
+
       subject: `New YRP Journal Submission: ${title}`,
+
 
       text: `
 NEW YRP JOURNAL SUBMISSION
@@ -95,7 +122,9 @@ ABSTRACT:
 ${abstract}
       `,
 
+
       attachments
+
     });
 
 
@@ -106,10 +135,13 @@ ${abstract}
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Submission error:", error);
+
 
     return res.status(500).json({
       error: "Submission failed"
     });
+
   }
+
 }
